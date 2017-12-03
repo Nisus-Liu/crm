@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="com.ssh.nisus.domain" >
+    <class name="Linkman" table="cst_linkman" lazy="true">
+        <!-- 主键列比较特殊, 需要单独配置 -->
+        <id name="lkm_id" column="lkm_id">
+            <!--生成ID的方法-->
+            <!--<generator class="native"></generator>-->
+        </id>
+        <property name="lk_name" column="lk_name"/>
+        <property name="lkm_gender" column="lkm_gender"></property>
+        <property name="lkm_phone" column="lkm_phone"></property>
+        <property name="lkm_mobile" column="lkm_mobile"></property>
+        <many-to-one name="customer" column="lkm_cust_id" class="Linkman" cascade="save-update"/>
+    </class>
+</hibernate-mapping>

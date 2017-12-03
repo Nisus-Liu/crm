@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation=
+		       "http://www.springframework.org/schema/beans
+		       http://www.springframework.org/schema/beans/spring-beans.xsd
+		       http://www.springframework.org/schema/context
+		       http://www.springframework.org/schema/context/spring-context.xsd
+		       http://www.springframework.org/schema/aop
+		       http://www.springframework.org/schema/aop/spring-aop.xsd
+		       http://www.springframework.org/schema/tx
+			   http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+	
+	
+	<bean name="userDao" class="com.ssh.nisus.dao.impl.UserDaoImpl"></bean>
+	<!--<bean name="customerDao" class="com.ssh.nisus.dao.impl.CustomerDaoImpl"></bean>-->
+	<!--<bean name="customerService" class="com.ssh.nisus.service.impl.CustomerServiceImpl">-->
+	<!--<property name="customerDao" ref="customerDao"></property>-->
+	<!--</bean>-->
+	
+	<bean name="userService" class="com.ssh.nisus.service.impl.UserServiceImpl">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+	
+	
+	<!--
+		==三大框架整合试验=================================================================
+	-->
+	
+	<!--打开注解, 开启扫描-->
+	<context:component-scan base-package="com.ssh.nisus"/>
+	
+	<!--生成action-->
+	<bean name="testAction" class="com.ssh.nisus.web.action.TestAction">
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		整合hibernate
+	-->
+	<!--法一: 读取hibernate的配置文件-->
+	<!--<bean name="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">-->
+	<!--<property name="configLocation" value="classpath:hibernate.cfg.xml"/>-->
+	<!--</bean>-->
+	
+	<!--法二: 融合进spring配置中-->
+	<!--<bean name="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">-->
+	<!--&lt;!&ndash;1. hibernate主配置项&ndash;&gt;-->
+	<!--<property name="hibernateProperties">-->
+	<!--<props>-->
+	<!--<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>-->
+	<!--<prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/crm_hibernate</prop>-->
+	<!--<prop key="hibernate.connection.username">root</prop>-->
+	<!--<prop key="hibernate.connection.password">88</prop>-->
+	<!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>-->
+	<!--<prop key="hibernate.show_sql">true</prop>-->
+	<!--<prop key="hibernate.format_sql">true</prop>-->
+	<!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+	<!--</props>-->
+	<!--</property>-->
+	<!---->
+	<!--&lt;!&ndash;2. orm原数据/映射配置&ndash;&gt;-->
+	<!--&lt;!&ndash;指定读取的路径&ndash;&gt;-->
+	<!--<property name="mappingDirectoryLocations" value="classpath:com/ssh/nisus/domain"></property>-->
+	<!--</bean>-->
+	
+	<!--法二: 融合进spring配置中(注解方式-fail,貌似不支持hibernate5 <- 依然用LocalSessionFactoryBean即可)-->
+	<!--<bean name="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">-->
+	<!--<bean name="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">-->
+	<!--&lt;!&ndash;1. hibernate主配置项&ndash;&gt;-->
+	<!--<property name="hibernateProperties">-->
+	<!--<props>-->
+	<!--<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>-->
+	<!--<prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/crm_hibernate</prop>-->
+	<!--<prop key="hibernate.connection.username">root</prop>-->
+	<!--<prop key="hibernate.connection.password">88</prop>-->
+	<!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>-->
+	<!--<prop key="hibernate.show_sql">true</prop>-->
+	<!--<prop key="hibernate.format_sql">true</prop>-->
+	<!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+	<!--</props>-->
+	<!--</property>-->
+	<!---->
+	<!--&lt;!&ndash;2. orm原数据/映射配置&ndash;&gt;-->
+	<!--<property name="annotatedClasses" >-->
+	<!--<array>-->
+	<!--<value>com.ssh.nisus.domain.Customer</value>-->
+	<!--<value>com.ssh.nisus.domain.Linkman</value>-->
+	<!--</array>-->
+	<!--</property>-->
+	<!--</bean>-->
+	
+	
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		整合c3p0连接池
+	-->
+	<!--1. 准备连接池配置参数(properties文件)-->
+	<!--2. 读取配置文件-->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<!--3. 配置生成c3p0bean, 引入读取的配置参数-->
+	<bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"/>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+		<property name="user" value="${jdbc.user}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	<!--4. 将连接池引入spring, 替换掉原有的-->
+	<bean name="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!--1. hibernate主配置项-->
+		<!--引入外部dataSource, 替换原有的四项参数-->
+		<property name="dataSource" ref="dataSource"/>
+		<property name="hibernateProperties">
+			<props>
+				<!--原有四项参数被替换-->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		
+		<!--2. orm原数据/映射配置-->
+		<property name="annotatedClasses">
+			<array>
+				<value>com.ssh.nisus.domain.Customer</value>
+				<value>com.ssh.nisus.domain.Linkman</value>
+				<value>com.ssh.nisus.domain.User</value>
+			</array>
+		</property>
+	</bean>
+	
+	
+	<!--
+		整合hibernate事务管理
+	-->
+	<!--配置hibernate事务管理者-->
+	<bean name="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!--xml方式-->
+	<!--<tx:advice id="txadvice" transaction-manager="transactionManager">-->
+		<!--<tx:attributes>-->
+			<!--&lt;!&ndash;以方法为单位, 指定什么方法应该用事务通知&ndash;&gt;-->
+			<!--<tx:method name="save*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="false"/>-->
+			<!--<tx:method name="delete*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="false"/>-->
+			<!--<tx:method name="update*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="false"/>-->
+			<!--<tx:method name="get*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="true"/>-->
+			<!--<tx:method name="persist*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="false"/>-->
+			<!--<tx:method name="remove*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="false"/>-->
+			<!--<tx:method name="modify*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="false"/>-->
+			<!--<tx:method name="find*" isolation="REPEATABLE_READ" propagation="REQUIRED" read-only="true"/>-->
+		<!--</tx:attributes>-->
+	<!--</tx:advice>-->
+	<!---->
+	<!--<aop:config>-->
+		<!--<aop:pointcut id="txpc" expression="execution(* com.ssh.nisus.test.dao.TstUserDaoImpl.*(..))"></aop:pointcut>-->
+		<!--<aop:advisor advice-ref="txadvice" pointcut-ref="txpc"/>-->
+	<!--</aop:config>-->
+
+	
+	<!--注解方式-->
+	<!--开启事务注解-->
+	<!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+	<!--没有transaction-manager会自动找， 只要名字一致-->
+	<tx:annotation-driven/>
+	
+
+</beans>

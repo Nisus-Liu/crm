@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+		"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+		"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!--
+		配置常量值(修改,这里比defaul.properties文件后加载, 这里的配置会覆盖之)
+	-->
+	<!--post请求编码配置-->
+	<constant name="struts.i18n.encoding" value="UTF-8"/>
+	
+	<!--指定访问action的后缀-->
+	<constant name="struts.action.extension" value="action,do,"/>
+	
+	<!--设置开发者模式-->
+	<!--true: 表示的开启开发者模式-->
+	<!--开发者模式支持热部署, 即strut.xml里的内容的改动立即生效, 而无需重启服务器或重新部署-->
+	<constant name="struts.devMode" value="true"/>
+	
+	<!--配置上传文件大小限制-->
+	<!--单位:B, 默认是2M-->
+	<constant name="struts.multipart.maxSize" value="209715200"/>   <!--这里设为200M-->
+	
+	<!--开启动态方法访问-->
+	<!--这样就可以 '.../命名空间/action名!要调用的方法名'  调用方法了-->
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+	
+	
+	<!--
+		struts2与spring整合
+	-->
+	<!--交由spring管理bean-->
+	<!--<constant name="struts.objectFactory" value="spring"/>-->
+	<!--<constant name="struts.objectFactory.spring.autoWire" value="auto"/>-->
+	
+	
+	
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!--
+		package配置详解:
+			method: 不写默认走excute
+			type: 默认转发, dispatcher
+			action>>name: url带上这个名称就可以定位要访问的action类以及方法
+			result>>name: 必须和方法返回值一致, 或者这里缺省且方法返回默认值
+	-->
+	
+
+	
+	<!--
+		客户关系管理系统
+	-->
+	<package name="cust_relation_manager_system" namespace="/" extends="struts-default">
+		<!--
+			配置拦截器
+		-->
+		<interceptors>
+			<!--1. 注册拦截器-->
+			<interceptor name="MyLoginInpt" class="com.ssh.nisus.web.interceptor.LoginInterceptor"></interceptor>
+			<!--2. 配置拦截器栈-->
+			<interceptor-stack name="myinptstack">
+				<!--引入自定义拦截器-->
+				<!--大部分情况, 自定义拦截器都在官方的前面-->
+				<interceptor-ref name="MyLoginInpt">
+					<!--配置需要拦截的和不需要拦截的方法-->
+					<param name="excludeMethods">login,goLoginUI,goHomeUI,logout</param>
+				</interceptor-ref>
+				<!--包含官方默认栈-->
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!--3. 指定包中的默认拦截器栈-->
+		<default-interceptor-ref name="myinptstack"></default-interceptor-ref>
+		
+		
+		<!--
+			全局结果映射
+		-->
+		<global-results>
+			<result name="error" type="dispatcher">/jsp/error.jsp</result>
+			<!--进入首页-->
+			<result name="goHomeUI" type="redirect">/index.jsp</result>
+			<!--进入登录界面-->
+			<result type="redirect" name="goLoginUI">/login.jsp</result>
+		</global-results>
+		
+		<!--
+			全局异常映射
+		-->
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.RuntimeException" result="error"></exception-mapping>
+			<!--这里返回的error和全局的不会冲突, 应该是先找局部的然后再找全局的吧-->
+		</global-exception-mappings>
+		
+		<!--
+			客户功能集合
+		-->
+		<action name="customer_*" class="com.ssh.nisus.web.action.CustomerAction" method="{1}">
+			<result type="dispatcher" name="list">/jsp/customer/list.jsp</result>
+			<result type="dispatcher" name="goAddUI">/jsp/customer/add.jsp</result>
+			<result type="redirectAction" name="goCustomerList">customer_list</result>
+		</action>
+		
+		<!--
+			用户功能集合
+		-->
+		<!--ssh整合下, 交由spring管理-->
+		<!--<action name="user_*" class="com.ssh.nisus.web.action.UserAction" method="{1}">-->
+		<action name="user_*" class="userAction" method="{1}">
+			<!--登录错误返回登录界面(内部转发)-->
+			<result name="error">/login.jsp</result>
+		
+		</action>
+	
+	
+	</package>
+	
+
+
+</struts>

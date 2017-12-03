@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="com.ssh.nisus.domain" >
+    <class name="Customer" table="cst_customer" lazy="true">
+        <!-- 主键列比较特殊, 需要单独配置 -->
+        <id name="cust_id" column="cust_id">
+            <!--生成ID的方法-->
+            <!--<generator class="native"></generator>-->
+        </id>
+        <property name="cust_name" column="cust_name"/>
+        <!--其他普通属性用property-->
+        <property name="cust_source" column="cust_source"></property>
+        <property name="cust_level" column="cust_level"></property>
+        <property name="cust_linkman" column="cust_linkman"></property>
+        <property name="cust_phone" column="cust_phone"></property>
+        <property name="cust_mobile" column="cust_mobile"></property>
+        <!--主表用来放从表的集合-->
+        <!--<set name="linkMen" cascade="save-update, delete">      &lt;!&ndash;or: cascade="all" &ndash;&gt;-->
+        <set name="linkMen" cascade="save-update, delete" inverse="true" lazy="true" fetch="select">
+            <!--声明外键-->
+            <key column="lkm_cust_id"></key>
+            <!--指定从表bean-->
+            <one-to-many class="Linkman"/>
+            <!--理解:
+            增: 将某个联系人(没有客户ID'lkm_cust_id')加入客户bean的set中, 加之前, 还要干一件事: 将主表主键set给从表外键,
+            由此产生外键关联, 提交时, 数据库更新从表的外键值.
+            删除: 删除之前, 将从表bean的外键字段置空. (通过key找外键, 通过noe-tomany找类)
+            -->
+        </set>
+    </class>
+</hibernate-mapping>

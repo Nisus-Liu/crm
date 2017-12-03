@@ -1,0 +1,7 @@
+<beans>
+
+    <!--Service层-->
+    <bean id="CustomerService" class="com.ssh.nisus.service.impl.CustomerServiceImpl"/>
+    <!--dao层-->
+    <bean id="CustomerDao" class="com.ssh.nisus.dao.impl.CustomerDaoImpl"></bean>
+</beans>

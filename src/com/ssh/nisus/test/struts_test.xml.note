@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+		"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+		"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	
+	
+	<!--struts2与spring整合测试 方式一
+		(半整合, struts2依然创建自己的action,但是属性注入交由spring管理, 这也是默认情况)
+	-->
+	<!--<package name="test" namespace="/" extends="struts-default">-->
+		<!---->
+		<!--<action name="test_*" class="com.ssh.nisus.web.action.TestAction" method="{1}">-->
+			<!--<result name="success">/test01.jsp</result>-->
+		<!--</action>-->
+	<!---->
+	<!---->
+	<!--</package>-->
+	
+	
+	<!--struts2与spring整合测试 方式二
+		(完全整合, 完全交由spring管理action, 但是注意生命周期必须是多例, 才能和struts2框架契合)
+	-->
+	<package name="test" namespace="/" extends="struts-default">
+		
+		<!--关键是class直接引用spring容器中的即可-->
+		<action name="test_*" class="testAction" method="{1}">
+			<result name="success">/test01.jsp</result>
+		</action>
+	
+	
+	</package>
+	
+	
+
+
+</struts>
