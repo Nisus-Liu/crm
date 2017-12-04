@@ -94,7 +94,7 @@
 		<!--
 			客户功能集合
 		-->
-		<action name="customer_*" class="com.ssh.nisus.web.action.CustomerAction" method="{1}">
+		<action name="customer_*" class="customerAction" method="{1}">
 			<result type="dispatcher" name="list">/jsp/customer/list.jsp</result>
 			<result type="dispatcher" name="goAddUI">/jsp/customer/add.jsp</result>
 			<result type="redirectAction" name="goCustomerList">customer_list</result>

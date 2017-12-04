@@ -47,20 +47,28 @@
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<!--spring提供线程绑定的session-->
+				<prop key="current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
 			</props>
 		</property>
 		
 		<!--2. orm原数据/映射配置-->
 		<!--引用带注解的类(持久类)-->
-		<property name="annotatedClasses">
-			<array>
-				<value>com.ssh.nisus.domain.Customer</value>
-				<value>com.ssh.nisus.domain.Linkman</value>
-				<value>com.ssh.nisus.domain.User</value>
-			</array>
-		</property>
+		<!--<property name="annotatedClasses">-->
+			<!--<array>-->
+				<!--<value>com.ssh.nisus.domain.Customer</value>-->
+				<!--<value>com.ssh.nisus.domain.Linkman</value>-->
+				<!--<value>com.ssh.nisus.domain.User</value>-->
+			<!--</array>-->
+		<!--</property>-->
+		<!--m2: 扫描Javabean所在的包-->
+		<property name="packagesToScan" value="com.ssh.nisus.domain"/>
 	</bean>
 	
+	<!--配置hibernateTemplate-->
+	<bean name="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
 	
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		整合hibernate事务管理

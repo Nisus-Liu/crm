@@ -3,6 +3,7 @@ package com.ssh.nisus.utils;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * 自定义日志/调试工具类
@@ -37,6 +38,16 @@ public class Log {
 		// 每次调用应该讲steNum归为1
 		steNum = 1;
 		serialNum++;
+		// 针对Object是数组集合等的时候, 为了打印结果好看(fail)
+		if (o instanceof List) {
+			List list = (List) o;
+			String ostr = "";
+			for (Object el : list) {
+				ostr += el;
+			}
+			o = ostr;
+		}
+		
 		System.out.println("[MyLog " + ctime_fmt + ", " + serialNum + "] " + o + "\t\t...at\t" + ste);
 		
 	}

@@ -3,11 +3,16 @@ package com.ssh.nisus.service.impl;
 import com.ssh.nisus.dao.CustomerDao;
 import com.ssh.nisus.dao.impl.CustomerDaoImpl;
 import com.ssh.nisus.domain.Customer;
+import com.ssh.nisus.domain.beankit.PageBean;
 import com.ssh.nisus.factory.BeanFactory;
 import com.ssh.nisus.service.BaseService;
 import com.ssh.nisus.service.CustomerService;
 import com.ssh.nisus.utils.HibUtil;
+import com.ssh.nisus.utils.Log;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,17 +22,13 @@ import java.util.List;
  * @email: liuhejunlj@136.com
  * @date: 2017-11-20-22:30
  */
+@Service("customerService")
 public class CustomerServiceImpl extends BaseService implements CustomerService{
     
-    public CustomerDao getCustomerDao() {
-        return customerDao;
-    }
-    
-    public void setCustomerDao(CustomerDao customerDao) {
-        this.customerDao = customerDao;
-    }
+
     
     //    private CustomerDao factDaoField = (CustomerDao) BeanFactory.getBean("CustomerDao");
+    @Autowired
     private CustomerDao customerDao;
 
     @Override
@@ -102,5 +103,21 @@ public class CustomerServiceImpl extends BaseService implements CustomerService{
             HibUtil.rollback();
         }
         return flag;
+    }
+    
+    @Override
+    public PageBean getPageBean(Integer currentPage, Integer pageSize, DetachedCriteria dc) {
+        // 得到总记录数
+        Integer rows = customerDao.getRows(dc);
+        Log.trace("总行数: "+rows);
+        PageBean pb = new PageBean(currentPage, pageSize, rows);
+        
+        // 查询数据
+        List<Customer> customers = customerDao.getCustomerByPage(dc, pb.getStart(), pb.getPageSize());
+        // 封装数据
+        pb.setData(customers);
+        // 返回
+        return pb;
+        
     }
 }

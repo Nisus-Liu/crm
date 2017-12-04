@@ -5,29 +5,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<TITLE>客户列表</TITLE> 
+<TITLE>客户列表</TITLE>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <LINK href="${pageContext.request.contextPath }/css/Style.css" type=text/css rel=stylesheet>
 <LINK href="${pageContext.request.contextPath }/css/Manage.css" type=text/css
 	rel=stylesheet>
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery-1.4.4.min.js"></script>
 <SCRIPT language=javascript>
-	function to_page(page){
-		if(page){
-			$("#page").val(page);
-		}
-		document.customerForm.submit();
-		
+    // 切换页面
+	function changePage(changedPage){
+        $("#ipt_currentPage").val(changedPage);
+        $("#customerForm").submit();
 	}
+
+	// 改变页大小
+	function changePageSize(pageSize) {
+        $("#customerForm").submit();
+    }
 </SCRIPT>
 
 <META content="MSHTML 6.00.2900.3492" name=GENERATOR>
 </HEAD>
 <BODY>
 	<FORM id="customerForm" name="customerForm"
-		action="${pageContext.request.contextPath }/customerServlet?method=list"
+		action="${pageContext.request.contextPath }/customer_list"
 		method=post>
-		
+
 		<TABLE cellSpacing=0 cellPadding=0 width="98%" border=0>
 			<TBODY>
 				<TR>
@@ -64,16 +67,15 @@
 												<TR>
 													<TD>客户名称：</TD>
 													<TD><INPUT class=textbox id=sChannel2
-														style="WIDTH: 80px" maxLength=50 name="cust_name"></TD>
-													
+														style="WIDTH: 80px" maxLength=50 name="cust_name" value="${param.cust_name}" ></TD>
 													<TD><INPUT class=button id=sButton2 type=submit
-														value=" 筛选 " name=sButton2></TD>
+														value=" 筛选 " ></TD> <%--name=sButton2--%>
 												</TR>
 											</TBODY>
 										</TABLE>
 									</TD>
 								</TR>
-							    
+
 								<TR>
 									<TD>
 										<TABLE id=grid
@@ -96,30 +98,16 @@
 												<%--<c:forEach items="${list}" var="customer">--%>
 												<%--#list 在值栈的context部分中取--%>
 												<%--<s:iterator value="#list">--%>
-												<s:iterator value="#list" var="cust">
-												<%--<TR--%>
-													<%--style="FONT-WEIGHT: normal; FONT-STYLE: normal; BACKGROUND-COLOR: white; TEXT-DECORATION: none">--%>
-													<%--<TD>${customer.cust_name }</TD>--%>
-													<%--<TD>${customer.cust_level }</TD>--%>
-													<%--<TD>${customer.cust_source }</TD>--%>
-													<%--<TD>${customer.cust_linkman }</TD>--%>
-													<%--<TD>${customer.cust_phone }</TD>--%>
-													<%--<TD>${customer.cust_mobile }</TD>--%>
-													<%--<TD>--%>
-													<%--<a href="${pageContext.request.contextPath }/customer_edit?cust_id=${customer.cust_id}">修改</a>--%>
-													<%--&nbsp;&nbsp;--%>
-													<%--<a href="${pageContext.request.contextPath }/customer_deleteOne?cust_id=${customer.cust_id}">删除</a>--%>
-													<%--</TD>--%>
-												<%--</TR>--%>
+												<s:iterator value="#pageBean.data" var="cust">
 													<%--ognl玩法--%>
 													<TR
 															style="FONT-WEIGHT: normal; FONT-STYLE: normal; BACKGROUND-COLOR: white; TEXT-DECORATION: none">
 														<TD><s:property value="#cust.cust_name"/> </TD>
-														<TD><s:property value="#cust.ust_level"/></TD>
+														<TD><s:property value="#cust.cust_level"/></TD>
 														<TD><s:property value="#cust.cust_source"/></TD>
 														<TD><s:property value="#cust.cust_linkman"/></TD>
-														<TD><s:property value="#cust.ust_phone"/></TD>
 														<TD><s:property value="#cust.cust_mobile"/></TD>
+														<TD><s:property value="#cust.cust_phone"/></TD>
 														<TD>
 															<a href="${pageContext.request.contextPath }/customer_edit?cust_id=<s:property value='#cust.cust_id'/>">修改</a>
 															&nbsp;&nbsp;
@@ -133,27 +121,31 @@
 										</TABLE>
 									</TD>
 								</TR>
-								
+
+								<%--
+									<<<< 分页条
+								--%>
 								<TR>
 									<TD><SPAN id=pagelink>
 											<DIV
 												style="LINE-HEIGHT: 20px; HEIGHT: 20px; TEXT-ALIGN: right">
-												共[<B>${total}</B>]条记录,[<B>${totalPage}</B>]页
+												共[<B>${pageBean.rows}</B>]条记录,[<B>${pageBean.totalPage}</B>]页
 												,每页显示
-												<select name="pageSize">
-												
-												<option value="15" <c:if test="${pageSize==1 }">selected</c:if>>1</option>
-												<option value="30" <c:if test="${pageSize==30 }">selected</c:if>>30</option>
+												<select name="pageSize" onchange="changePageSize($(this).val())">
+												<s:iterator value="#pageBean.pageSizeSelector" var="ps">
+                                                    <option value=<s:property value="#ps"/> <s:if test="#pageBean.pageSize==#ps">selected</s:if>  ><s:property value="#ps"/></option>
+												</s:iterator>
+												<%--<option value="30" <c:if test="${pageSize==30 }">selected</c:if>>30</option>--%>
 												</select>
 												条
-												[<A href="javascript:to_page(${page-1})">前一页</A>]
-												<B>${page}</B>
-												[<A href="javascript:to_page(${page+1})">后一页</A>] 
+												[<A href="javascript:void(0)" onclick="changePage(<s:property value='#pageBean.currentPage-1' />)" >前一页</A>]
+												<B><s:property value="#pageBean.currentPage"/> </B>
+												[<A href="javascript:void(0)" onclick="changePage(<s:property value='#pageBean.currentPage+1' />)">后一页</A>]
 												到
-												<input type="text" size="3" id="page" name="page" />
+												<input id="ipt_currentPage" type="text" size="3" id="page" name="currentPage" value="<s:property value='#pageBean.currentPage'/>" />
 												页
 												
-												<input type="button" value="Go" onclick="to_page()"/>
+												<input type="button" value="Go" onclick="changePage()"/>
 											</DIV>
 									</SPAN></TD>
 								</TR>
