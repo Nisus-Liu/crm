@@ -31,23 +31,24 @@ public class CustomerServiceImpl extends BaseService implements CustomerService{
     @Autowired
     private CustomerDao customerDao;
 
-    @Override
-    public List<Customer> findAll() {
-        List<Customer> list = null;
-
-        try {
-            Session session = HibUtil.start();
-
-            list = customerDao.findAll();
-
-            HibUtil.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            HibUtil.rollback();
-        }
-
-        return list;
-    }
+//    ^ BaseDao模式替换
+//    @Override
+//    public List<Customer> findAll() {
+//        List<Customer> list = null;
+//
+//        try {
+//            Session session = HibUtil.start();
+//
+//            list = customerDao.findAll();
+//
+//            HibUtil.commit();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            HibUtil.rollback();
+//        }
+//
+//        return list;
+//    }
 
     @Override
     public void service() {
@@ -113,7 +114,8 @@ public class CustomerServiceImpl extends BaseService implements CustomerService{
         PageBean pb = new PageBean(currentPage, pageSize, rows);
         
         // 查询数据
-        List<Customer> customers = customerDao.getCustomerByPage(dc, pb.getStart(), pb.getPageSize());
+//        List<Customer> customers = customerDao.getCustomerByPage(dc, pb.getStart(), pb.getPageSize());
+        List<Customer> customers = customerDao.getByPage(dc, pb.getStart(), pb.getPageSize());
         // 封装数据
         pb.setData(customers);
         // 返回

@@ -14,7 +14,7 @@ public interface CustomerService {
      * 查找所有客户
      * @return
      */
-    List<Customer> findAll();
+//    List<Customer> findAll();
 
     void service();
 	

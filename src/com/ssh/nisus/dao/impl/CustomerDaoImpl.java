@@ -5,6 +5,7 @@ import com.ssh.nisus.domain.Customer;
 import com.ssh.nisus.utils.HibUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -25,18 +26,21 @@ import java.util.List;
  * @date: 2017-11-20-22:28
  */
 @Repository("customerDao")
-public class CustomerDaoImpl implements CustomerDao {
-    @Resource(name = "hibernateTemplate")
-    private HibernateTemplate hitp;
+public class CustomerDaoImpl extends BaseDaoImpl<Customer> implements CustomerDao {
+//    @Resource(name = "hibernateTemplate")
+    private HibernateTemplate hitp = getHibernateTemplate();
     
-    @Override
-    public List<Customer> findAll() {
-
-        Criteria criteria = HibUtil.getCurrentSession().createCriteria(Customer.class);
-        List list = criteria.list();
-
-        return list;
-    }
+//    @Override
+//    public List<Customer> findAll() {
+//
+//        Criteria criteria = HibUtil.getCurrentSession().createCriteria(Customer.class);
+//        List list = criteria.list();
+//
+//        return list;
+//    }
+    
+    
+    
 
     public void dao() {
         System.out.println("dao层方法可行");
@@ -69,26 +73,26 @@ public class CustomerDaoImpl implements CustomerDao {
         return true;
     }
     
-    /**获取总行数
-     * @param dc
-     * @return
-     */
-    @Override
-    public Integer getRows(DetachedCriteria dc) {
-        // 设置聚合查询
-        dc.setProjection(Projections.rowCount());
-    
-        List<Long> res = (List<Long>) hitp.findByCriteria(dc);
-        // 查完了一定要置空, 因为离线对象会被其他方法共享!!!!!!
-        dc.setProjection(null);
-        if (res != null && res.size() > 0) {
-            // long -> integer
-            return res.get(0).intValue();
-        } else {
-            return null;
-        }
-    
-    }
+//    /**获取总行数
+//     * @param dc
+//     * @return
+//     */
+//    @Override
+//    public Integer getRows(DetachedCriteria dc) {
+//        // 设置聚合查询
+//        dc.setProjection(Projections.rowCount());
+//
+//        List<Long> res = (List<Long>) hitp.findByCriteria(dc);
+//        // 查完了一定要置空, 因为离线对象会被其他方法共享!!!!!!
+//        dc.setProjection(null);
+//        if (res != null && res.size() > 0) {
+//            // long -> integer
+//            return res.get(0).intValue();
+//        } else {
+//            return null;
+//        }
+//
+//    }
     
     /**
      * 分页查询客户
@@ -102,5 +106,11 @@ public class CustomerDaoImpl implements CustomerDao {
         List<Customer> res = (List<Customer>) hitp.findByCriteria(dc, start, pageSize);
     
         return res;
+    }
+    
+    @Override
+    @Resource(name = "sessionFactory")
+    public void setSessionFactoryToHibernateDaoSupport(SessionFactory sessionFactory) {
+        super.setSessionFactory(sessionFactory);
     }
 }

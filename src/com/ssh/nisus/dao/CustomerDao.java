@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * 负责客户相关数据
  */
-public interface CustomerDao {
-    List<Customer> findAll();
+public interface CustomerDao extends BaseDao<Customer>{
+//    List<Customer> findAll();
 
     void dao();
 	
