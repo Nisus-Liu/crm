@@ -23,4 +23,8 @@ public interface CustomerService {
 	boolean add(Customer model);
 	
 	PageBean getPageBean(Integer currentPage, Integer pageSize, DetachedCriteria dc);
+	
+	Customer get(Customer customer);
+	
+	Boolean update(Customer customer);
 }

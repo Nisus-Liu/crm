@@ -1,5 +1,6 @@
 package com.ssh.nisus.web.action;
 
+import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.ssh.nisus.dao.CustomerDao;
@@ -51,6 +52,18 @@ public class TestAction extends ActionSupport{
         Log.trace("userService="+userService);
         userService.fun();
         return SUCCESS;
+    }
+    
+    /*
+    
+	测试信息提示页面是否有效
+	 */
+    public String fun04() {
+//        ActionContext.getContext().put("error", "错误提示");
+//        ActionContext.getContext().put("info", "一般信息");
+    
+        throw new RuntimeException("异常提示");
+//        return "error";
     }
     
     

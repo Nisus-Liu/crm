@@ -19,7 +19,7 @@ public interface CustomerDao extends BaseDao<Customer>{
 	
 	boolean add(Customer model);
 	
-	Integer getRows(DetachedCriteria dc);
+
 	
 	List<Customer> getCustomerByPage(DetachedCriteria dc, Integer start, Integer pageSize);
 }

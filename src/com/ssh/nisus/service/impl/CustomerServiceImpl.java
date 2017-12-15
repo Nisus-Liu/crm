@@ -9,6 +9,7 @@ import com.ssh.nisus.service.BaseService;
 import com.ssh.nisus.service.CustomerService;
 import com.ssh.nisus.utils.HibUtil;
 import com.ssh.nisus.utils.Log;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import java.util.List;
  * @date: 2017-11-20-22:30
  */
 @Service("customerService")
-public class CustomerServiceImpl extends BaseService implements CustomerService{
+public class CustomerServiceImpl extends BaseServiceImpl implements CustomerService{
     
 
     
@@ -70,21 +71,29 @@ public class CustomerServiceImpl extends BaseService implements CustomerService{
     public boolean deleteOneById(Customer c) {
         // 删除之前查询有没有这个客户
         boolean flag = false;
-        Session session = HibUtil.start();
+//        Session session = HibUtil.start();
+//
+//        try {
+//            c = customerDao.selectById(c.getCust_id());
+//            // 有: 删除; 无: 等同于删除
+//            if (c != null) {
+//                // 删除
+//                flag = customerDao.deleteOneById(c);
+//            } else {
+//                flag = true;        // 无, 等同于删除了
+//            }
+//            HibUtil.commit();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            HibUtil.rollback();
+//        }
+    
     
         try {
-            c = customerDao.selectById(c.getCust_id());
-            // 有: 删除; 无: 等同于删除
-            if (c != null) {
-                // 删除
-                flag = customerDao.deleteOneById(c);
-            } else {
-                flag = true;        // 无, 等同于删除了
-            }
-            HibUtil.commit();
+            customerDao.deleteById(c.getCust_id());
+            flag = true;
         } catch (Exception e) {
             e.printStackTrace();
-            HibUtil.rollback();
         }
     
         return  flag;
@@ -94,15 +103,23 @@ public class CustomerServiceImpl extends BaseService implements CustomerService{
     public boolean add(Customer model) {
     
         boolean flag=false;
-        Session session = HibUtil.start();
-        try {
-            flag = customerDao.add(model);
-            HibUtil.commit();
+//        Session session = HibUtil.start();
+//        try {
+//            flag = customerDao.add(model);
+//            HibUtil.commit();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            HibUtil.rollback();
+//        }
     
+        try {
+            customerDao.save(model);
+            flag = true;
         } catch (Exception e) {
             e.printStackTrace();
-            HibUtil.rollback();
         }
+    
         return flag;
     }
     
@@ -121,5 +138,25 @@ public class CustomerServiceImpl extends BaseService implements CustomerService{
         // 返回
         return pb;
         
+    }
+    
+    @Override
+    public Customer get(Customer customer) {
+    
+        return customerDao.getById(customer.getCust_id());
+    }
+    
+    @Override
+    public Boolean update(Customer customer) {
+        Boolean flag = false;
+        try {
+            customerDao.update(customer);
+            flag = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+    
+        return flag;
     }
 }

@@ -1,18 +1,19 @@
 package com.ssh.nisus.test;
 
+import com.ssh.nisus.dao.impl.BaseDaoImpl;
+import com.ssh.nisus.domain.BaseDict;
 import com.ssh.nisus.domain.Customer;
 import com.ssh.nisus.domain.User;
 import com.ssh.nisus.test.dao.TstUserDao;
+import com.ssh.nisus.utils.HibUtil;
 import com.ssh.nisus.utils.Log;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -31,6 +32,8 @@ import javax.annotation.Resource;
 public class Demo04 {
 	@Resource(name = "sessionFactory")
 	private SessionFactory sessionFactory;
+	@Autowired
+	private HibernateTemplate hibernateTemplate;
 	
 	@Test
 	public void fun01() {
@@ -44,6 +47,7 @@ public class Demo04 {
 		Object sessionFactory = ac.getBean("sessionFactory");
 		
 		Log.trace(this.sessionFactory);
+		
 	}
 	
 	

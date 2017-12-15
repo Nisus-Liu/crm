@@ -21,7 +21,7 @@
         #hibernate.connection.username gavin
         #hibernate.connection.password-->
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/crm_hibernate</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/crm_ssh</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">88</property>
         <!--数据库方言  -SQL是普通话, 各种类的数据就是方言-->
@@ -49,7 +49,7 @@
         <!--事务相关        // 避免和spring的冲突, 不设置事务处理 -->
         <!--异常: no currentsessioncontext configured！-->
         <!--　1、如果是本地事务：-->
-        <!--<property name="hibernate.current_session_context_class">thread</property>-->
+        <property name="hibernate.current_session_context_class">thread</property>
 
         <!--　2、如果是全局事务-->
         <!--<property name="hibernate.current_session_context_class">jta</property>-->
@@ -74,8 +74,9 @@
         <mapping resource="com/domain/SysUser.hbm.xml"/>-->
         <!--注解方式-->
         <mapping class="com.ssh.nisus.domain.Customer"/>
+        <mapping class="com.ssh.nisus.domain.BaseDict"/>
         <mapping class="com.ssh.nisus.domain.Linkman"/>
-        <mapping class="com.ssh.nisus.domain.User"/>
+        <!--<mapping class="com.ssh.nisus.domain.User"/>-->
         <!--
             //映射文件
         -->

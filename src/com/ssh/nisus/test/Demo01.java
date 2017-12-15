@@ -28,11 +28,11 @@ public class Demo01 {
         Session s = HibUtil.start();
         Customer c = new Customer();
         c.setCust_name("京东商城");
-        c.setCust_level("尊贵铂金");
+//        c.setCust_level("尊贵铂金");
 
         Linkman l = new Linkman();
-        l.setLk_name("奶茶妹妹");
-        c.getLinkMen().add(l);
+        l.setLkm_name("奶茶妹妹");
+        c.getLinkmen().add(l);
 
         l.setCustomer(c);
 

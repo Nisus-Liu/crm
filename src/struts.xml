@@ -25,9 +25,12 @@
 	<!--这样就可以 '.../命名空间/action名!要调用的方法名'  调用方法了-->
 	<constant name="struts.enable.DynamicMethodInvocation" value="true"/>
 	
+	<!--关闭struts2标签默认样式-->
+	<constant name="struts.ui.theme" value="simple"/>
+	
 	
 	<!--
-		struts2与spring整合
+		struts2与spring整合        不需要配置, 有struts-spring插件搞定
 	-->
 	<!--交由spring管理bean-->
 	<!--<constant name="struts.objectFactory" value="spring"/>-->
@@ -62,7 +65,7 @@
 				<!--大部分情况, 自定义拦截器都在官方的前面-->
 				<interceptor-ref name="MyLoginInpt">
 					<!--配置需要拦截的和不需要拦截的方法-->
-					<param name="excludeMethods">login,goLoginUI,goHomeUI,logout</param>
+					<param name="excludeMethods">login,goLoginUI,goHomeUI,logout,fun*</param>
 				</interceptor-ref>
 				<!--包含官方默认栈-->
 				<interceptor-ref name="defaultStack"></interceptor-ref>
@@ -87,7 +90,9 @@
 			全局异常映射
 		-->
 		<global-exception-mappings>
-			<exception-mapping exception="java.lang.RuntimeException" result="error"></exception-mapping>
+			<exception-mapping exception="java.lang.RuntimeException" result="error">
+				<param name="exception">abc</param>
+			</exception-mapping>
 			<!--这里返回的error和全局的不会冲突, 应该是先找局部的然后再找全局的吧-->
 		</global-exception-mappings>
 		
@@ -98,6 +103,7 @@
 			<result type="dispatcher" name="list">/jsp/customer/list.jsp</result>
 			<result type="dispatcher" name="goAddUI">/jsp/customer/add.jsp</result>
 			<result type="redirectAction" name="goCustomerList">customer_list</result>
+			<result type="dispatcher" name="goEditUI">/jsp/customer/edit.jsp</result>
 		</action>
 		
 		<!--
@@ -110,6 +116,26 @@
 			<result name="error">/login.jsp</result>
 		
 		</action>
+		
+		<!--
+			基础字典表
+		-->
+		<!--执行默认方法即可-->
+		<action name="baseDict" class="baseDictAction"></action>
+		
+		
+		
+		<!--
+			联系人
+		-->
+		<action name="linkmanAction_*" class="linkmanAction" method="{1}">
+			<result name="goLinkmanUI">/jsp/linkman/list.jsp</result>
+		</action>
+		
+		<!--
+		测试
+		-->
+		<action name="test_*" class="com.ssh.nisus.web.action.TestAction" method="{1}"></action>
 	
 	
 	</package>
